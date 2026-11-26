@@ -112,6 +112,7 @@
     v["業務員.登錄字號"] = String(sp.登錄字號 || "").trim();
     v["業務員.電話"] = fmtMobile(sp.電話 || "");
     v["業務員.單位"] = String(CL.業務員單位 || "").trim(); // 後台設定（layout.json），各家不同
+    v["業務員.送件單位"] = v["業務員.單位"]; // 遠雄：送件單位與單位代號相同
 
     const addr = parseAddr(ch.住所);
     if (addr) {
