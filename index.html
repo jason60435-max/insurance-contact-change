@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>個人資料修改申請書</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* VOICE: 安靜、精準的櫃台工具，像一張填好的申請書
+   IDEA: 左邊是「變更後資料」一張表，右邊是已用藍筆填好的申請書
+   PICTURE: 申請書預覽本身（藍色字＝程式填的）
+   COLOUR and TYPE: 白紙＋深藍墨字，填寫藍 #0033bf 為唯一強調；Noto Sans TC
+   LAYOUT: 兩欄（輸入｜預覽），600px 以下改為上下 */
+:root{color-scheme:light dark;
+ --bg:light-dark(#f4f5f8,#0f1218);--paper:light-dark(#fff,#181c24);--ink:light-dark(#141a2a,#e8ebf2);
+ --mute:light-dark(#5b6378,#9aa3b8);--line:light-dark(#d9dde6,#2c3342);--blue:light-dark(#0033bf,#7aa2ff);
+ --blue-bg:light-dark(#eaf0ff,#1a2546);--warn:light-dark(#9a3b00,#ffb37a);--warn-bg:light-dark(#fff4e8,#33220f);--ok:light-dark(#0b6b3a,#6fd6a0)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Noto Sans TC",system-ui,sans-serif;overflow-x:clip}
+header{padding:22px max(4vw,16px) 6px;display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline;justify-content:space-between}
+h1{font-size:clamp(24px,3vw,32px);line-height:1.1;margin:0;font-weight:700}
+.sub{color:var(--mute);font-size:14px;margin:4px 0 0}
+.top-actions{display:flex;flex-wrap:wrap;gap:8px}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:20px;padding:12px max(4vw,16px) 40px;max-width:1500px;margin:0 auto}
+@media(max-width:980px){main{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 18px 14px;margin-bottom:16px}
+.card h2{font-size:17px;margin:0 0 12px;font-weight:700;display:flex;gap:10px;align-items:baseline}
+.card h2 small{font-weight:400;color:var(--mute);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 14px}
+.full{grid-column:1/-1}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute)}
+input[type=text],input[type=email],input[type=tel],select{font:inherit;font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:9px 10px;min-height:44px;width:100%}
+input:focus-visible,select:focus-visible,button:focus-visible,.chk input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;font-size:13px}
+.chip{background:var(--blue-bg);color:var(--blue);border-radius:6px;padding:2px 8px}
+.chip b{font-weight:500;color:var(--mute);margin-right:4px}
+.bad{color:var(--warn)}
+.chk{display:flex;align-items:center;gap:8px;font-size:15px;min-height:36px;cursor:pointer}
+.chk input{width:20px;height:20px;accent-color:var(--blue);flex:none}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2px 14px}
+.co{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px;transition:border-color .15s}
+.co.on{border-color:var(--blue);box-shadow:inset 3px 0 0 var(--blue)}
+.co-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.co-head .chk{font-weight:700;font-size:16px}
+.co-head .pages{color:var(--mute);font-size:13px}
+.co-body{display:none;margin-top:8px;gap:10px 14px;grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+.co.on .co-body{display:grid}
+@media(max-width:520px){.co-body{grid-template-columns:minmax(0,1fr)!important}}
+.co-skip{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:4px 16px;font-size:14px;color:var(--mute)}
+.co-skip .chk{font-size:14px;min-height:30px}
+button{font:inherit;font-size:15px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:9px 14px;min-height:44px;cursor:pointer}
+button.primary{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:700;padding:10px 20px}
+:root[data-theme=dark] button.primary{color:#0b1020}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) button.primary{color:#0b1020}}
+button:disabled{opacity:.5;cursor:default}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.status{font-size:14px;color:var(--mute)}
+.viewer{position:sticky;top:12px;align-self:start}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
+.tab{flex:none;padding:7px 12px;min-height:38px;font-size:14px}
+.tab[aria-selected=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+:root[data-theme=dark] .tab[aria-selected=true]{color:#0b1020}
+.sheet{background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden;min-height:300px;display:grid;place-items:center}
+.sheet canvas{display:block;width:100%;height:auto}
+.empty{color:#5b6378;padding:40px 20px;text-align:center;font-size:15px;line-height:1.7}
+.pager{display:flex;align-items:center;gap:8px;justify-content:space-between;margin:8px 0;flex-wrap:wrap}
+.warns{margin:8px 0 0;padding:10px 12px;border-radius:8px;background:var(--warn-bg);color:var(--warn);font-size:14px}
+.warns:empty{display:none}
+.oknote{color:var(--ok);font-size:14px}
+.note{font-size:13px;color:var(--mute);margin:10px 0 0}
+input[type=file]{display:none}
+</style>
+</head>
+<body>
+<header>
+ <div>
+  <h1>個人資料修改申請書</h1>
+  <p class="sub">地址、電話、E-mail 只輸入一次，自動對好台灣、凱基、富邦、安達、全球、遠雄、臺銀七家申請書。資料只在你的瀏覽器處理，不會上傳。</p>
+ </div>
+ <div class="top-actions">
+  <button id="openJson" type="button">開啟填寫資料.json</button>
+  <button id="saveJson" type="button">存成填寫資料.json</button>
+  <button id="sample" type="button">範例</button>
+  <button id="clear" type="button">清除</button>
+  <input id="fileIn" type="file" accept=".json,application/json">
+ </div>
+</header>
+
+<main>
+<form id="f" autocomplete="off">
+ <section class="card">
+  <h2>要保人</h2>
+  <div class="grid">
+   <label class="f">姓名<input type="text" id="name"></label>
+   <label class="f">身分證字號<input type="text" id="idno" maxlength="10" style="text-transform:uppercase"></label>
+  </div>
+ </section>
+
+ <section class="card">
+  <h2>業務員 <small>只填合作公司；這台電腦會記住；簽名欄一律留空</small></h2>
+  <div class="grid">
+   <label class="f">登錄字號<input type="text" id="spNo" inputmode="numeric"></label>
+   <label class="f">聯絡電話<input type="tel" id="spTel"></label>
+  </div>
+ </section>
+
+ <section class="card">
+  <h2>變更後資料 <small>不改的留空</small></h2>
+  <div class="grid">
+   <label class="f full">住所（整串地址，含郵遞區號）<input type="text" id="addr" placeholder="320桃園市中壢區新興路102巷12號3樓"></label>
+   <div class="full chips" id="addrChips" aria-live="polite"></div>
+   <label class="f">住家電話<input type="tel" id="home" placeholder="03-1234567"></label>
+   <label class="f">公司電話<input type="tel" id="office" placeholder="03-4593851"></label>
+   <label class="f">公司分機<input type="text" id="ext" inputmode="numeric"></label>
+   <label class="f">行動電話<input type="tel" id="mobile" placeholder="0912-345-678"></label>
+   <label class="f full">E-mail<input type="email" id="email" placeholder="name@gmail.com" style="text-transform:none"></label>
+  </div>
+ </section>
+
+ <section class="card">
+  <h2>選項</h2>
+  <div class="opts">
+   <label class="chk"><input type="checkbox" id="o1" checked>一併變更所有保單</label>
+   <label class="chk"><input type="checkbox" id="o2" checked>收費地址同住所</label>
+   <label class="chk"><input type="checkbox" id="o3">戶籍地址同住所（凱基、安達）</label>
+   <label class="chk"><input type="checkbox" id="o4" checked>被保險人同一人一併變更（富邦）</label>
+  </div>
+  <div class="grid" style="margin-top:8px">
+   <label class="f">被保險人聯絡資料（台灣、遠雄、臺銀）<select id="o5"><option value="">不填</option><option>同要保人</option></select></label>
+   <label class="f">電子通知（富邦、凱基、安達、全球、遠雄）<select id="o6"><option value="">不填</option><option>申請</option><option>取消</option></select></label>
+  </div>
+ </section>
+
+ <section class="card">
+  <h2>要送的保險公司 <small>勾選才會產生</small></h2>
+  <div id="cos"></div>
+  <p class="note">某家不改某一項，就把那一家的「地址／電話／E-mail」取消勾選。保單號碼多張用「、」分隔。</p>
+ </section>
+
+ <section class="card">
+  <h2>非合作保險公司 <small>未與詮國合作，不填業務員資料</small></h2>
+  <div id="cosX"></div>
+ </section>
+
+ <div class="bar">
+  <label class="f" style="flex:1 1 160px">事項（檔名用）<input type="text" id="topic" value="聯絡資訊變更"></label>
+  <button class="primary" id="go" type="submit">產生申請書</button>
+ </div>
+ <p class="status" id="status" aria-live="polite"></p>
+</form>
+
+<aside class="viewer">
+ <section class="card">
+  <h2>預覽 <small>藍色字是自動填的；日期、簽名留空</small></h2>
+  <div class="tabs" id="tabs" role="tablist"></div>
+  <div class="pager" id="pager" hidden>
+   <div class="bar"><button type="button" id="prev">上一頁</button><span id="pageNo" class="status"></span><button type="button" id="next">下一頁</button></div>
+   <div class="bar"><button type="button" id="dlOne">下載這份 PDF</button><button type="button" id="dlAll" class="primary">全部下載（zip）</button></div>
+  </div>
+  <div class="sheet" id="sheet"><div class="empty">填好左邊資料、勾選保險公司，<br>按「產生申請書」就會在這裡看到填好的申請書。</div></div>
+  <div class="warns" id="warns"></div>
+  <p class="note" id="dlNote"></p>
+ </section>
+</aside>
+</main>
+
+<script src="lib/pdf-lib.min.js"></script>
+<script src="lib/fontkit.umd.min.js"></script>
+<script src="lib/jszip.min.js"></script>
+<script src="lib/pdf.min.js"></script>
+<script src="fill-core.js"></script>
+<script>
+{
+const $ = (id) => document.getElementById(id);
+const FC = window.FillCore;
+const CO = [
+ {k:"台灣",n:"台灣人壽",p:"1 頁"},{k:"凱基",n:"凱基人壽",p:"2 頁"},
+ {k:"富邦",n:"富邦人壽",p:"2 頁"},{k:"安達",n:"安達人壽",p:"2 頁"},
+ {k:"全球",n:"全球人壽",p:"1 頁"},{k:"遠雄",n:"遠雄人壽",p:"2 頁"},
+ {k:"臺銀",n:"臺銀人壽",p:"3 頁",x:1}];
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const PHONE = ["住家電話","公司電話","公司分機","行動電話"];
+
+const coHtml = (c) => `
+ <div class="co" id="co-${c.k}">
+  <div class="co-head"><label class="chk"><input type="checkbox" data-k="${c.k}" data-f="on">${c.n}</label><span class="pages">${c.p}</span></div>
+  <div class="co-body">
+   <label class="f">保單號碼${c.k==="遠雄"?"（歸戶變更，適用所有保單，免填）":""}<input type="text" data-k="${c.k}" data-f="pol" ${c.k==="遠雄"?"disabled":""}></label>
+   <label class="f">被保險人${c.k==="富邦"||c.k==="遠雄"?"（表單無此欄）":""}<input type="text" data-k="${c.k}" data-f="ins" ${c.k==="富邦"||c.k==="遠雄"?"disabled":""}></label>
+   <div class="co-skip">這家要改：
+    <label class="chk"><input type="checkbox" data-k="${c.k}" data-f="a" checked>地址</label>
+    <label class="chk"><input type="checkbox" data-k="${c.k}" data-f="p" checked>電話</label>
+    <label class="chk"><input type="checkbox" data-k="${c.k}" data-f="e" checked>E-mail</label>
+   </div>
+  </div>
+ </div>`;
+$("cos").innerHTML = CO.filter((c) => !c.x).map(coHtml).join("");
+$("cosX").innerHTML = CO.filter((c) => c.x).map(coHtml).join("");
+const fld = (k, f) => document.querySelector(`[data-k="${k}"][data-f="${f}"]`);
+document.querySelectorAll('[data-f="on"]').forEach((el) => el.addEventListener("change", () => $("co-" + el.dataset.k).classList.toggle("on", el.checked)));
+
+/* ---------- 地址即時拆解 ---------- */
+function showAddr() {
+ const a = $("addr").value.trim(), box = $("addrChips");
+ if (!a) { box.innerHTML = ""; return; }
+ const d = FC.parseAddr(a);
+ if (d._拆解失敗) { box.innerHTML = '<span class="bad">無法自動拆解：凱基、富邦、臺銀分欄位的地址不會填，台灣、安達會整串填入。請檢查格式。</span>'; return; }
+ const ks = ["郵遞區號","縣市","鄉鎮","村里","鄰","路街","段","巷","弄","號","號之","樓","樓之","其他"];
+ box.innerHTML = ks.filter((k) => d[k]).map((k) => `<span class="chip"><b>${k}</b>${esc(d[k])}</span>`).join("")
+  + (d.郵遞區號 ? "" : '<span class="bad">沒有郵遞區號</span>');
+}
+$("addr").addEventListener("input", showAddr);
+
+/* ---------- 畫面 <-> 資料 ---------- */
+function toCase() {
+ const g = (id) => $(id).value.trim();
+ const ch = {};
+ if (g("addr")) ch.住所 = g("addr");
+ [["home","住家電話"],["office","公司電話"],["ext","公司分機"],["mobile","行動電話"],["email","E-mail"]].forEach(([id,k]) => { if (g(id)) ch[k] = g(id); });
+ const cs = {業務員:{登錄字號:g("spNo"),電話:g("spTel")}, 要保人:{姓名:g("name"),身分證字號:g("idno").toUpperCase()}, 變更內容:ch,
+  選項:{一併變更所有保單:$("o1").checked,收費地址同住所:$("o2").checked,戶籍地址同住所:$("o3").checked,
+   被保險人同一人一併變更:$("o4").checked,被保險人聯絡資料:$("o5").value,電子通知:$("o6").value},
+  事項:g("topic") || "聯絡資訊變更", 保單:[]};
+ for (const c of CO) {
+  if (!fld(c.k,"on").checked) continue;
+  const e = {公司:c.k, 保單號碼:fld(c.k,"pol").value.trim(), 被保險人:fld(c.k,"ins").value.trim()};
+  const skip = [];
+  if (!fld(c.k,"a").checked) skip.push("住所");
+  if (!fld(c.k,"p").checked) skip.push(...PHONE);
+  if (!fld(c.k,"e").checked) skip.push("E-mail");
+  if (skip.length) e.略過 = skip;
+  if (fileNames[c.k]) e.檔名 = fileNames[c.k];
+  cs.保單.push(e);
+ }
+ return cs;
+}
+const SPK = "個資修改.業務員";
+function saveSp() { try { localStorage.setItem(SPK, JSON.stringify({no:$("spNo").value,tel:$("spTel").value})); } catch (e) {} }
+function loadSp() { try { const d = JSON.parse(localStorage.getItem(SPK) || "null"); if (d) { $("spNo").value = d.no || ""; $("spTel").value = d.tel || ""; } } catch (e) {} }
+["spNo","spTel"].forEach((id) => $(id).addEventListener("input", saveSp));
+let fileNames = {};
+function clearForm() {
+ fileNames = {};
+ ["name","idno","addr","home","office","ext","mobile","email"].forEach((id) => ($(id).value = ""));
+ $("topic").value = "聯絡資訊變更";
+ $("o1").checked = $("o2").checked = $("o4").checked = true; $("o3").checked = false; $("o5").value = $("o6").value = "";
+ for (const c of CO) {
+  fld(c.k,"on").checked = false; $("co-"+c.k).classList.remove("on");
+  fld(c.k,"pol").value = fld(c.k,"ins").value = "";
+  ["a","p","e"].forEach((f) => (fld(c.k,f).checked = true));
+ }
+ showAddr();
+}
+const addrText = (a) => typeof a === "string" ? a : (FC.parseAddr(a).郵遞區號 || "") + FC.parseAddr(a).全文;
+function fromCase(cs) {
+ clearForm();
+ const w = cs.要保人 || {}, ch = cs.變更內容 || {}, o = cs.選項 || {}, sp = cs.業務員;
+ if (sp) { $("spNo").value = sp.登錄字號 || ""; $("spTel").value = sp.電話 || ""; saveSp(); }
+ $("name").value = w.姓名 || ""; $("idno").value = w.身分證字號 || "";
+ if (ch.住所) $("addr").value = addrText(ch.住所);
+ [["home","住家電話"],["office","公司電話"],["ext","公司分機"],["mobile","行動電話"],["email","E-mail"]].forEach(([id,k]) => ($(id).value = ch[k] || ""));
+ if ("一併變更所有保單" in o) $("o1").checked = !!o.一併變更所有保單;
+ if ("收費地址同住所" in o) $("o2").checked = !!o.收費地址同住所;
+ if ("戶籍地址同住所" in o) $("o3").checked = !!o.戶籍地址同住所;
+ if ("被保險人同一人一併變更" in o) $("o4").checked = !!o.被保險人同一人一併變更;
+ $("o5").value = o.被保險人聯絡資料 || ""; $("o6").value = o.電子通知 || "";
+ $("topic").value = cs.事項 || "聯絡資訊變更";
+ for (const e of cs.保單 || []) {
+  const k = FC.ALIASES[e.公司]; if (!k) continue;
+  fld(k,"on").checked = true; $("co-"+k).classList.add("on");
+  fld(k,"pol").value = Array.isArray(e.保單號碼) ? e.保單號碼.join("、") : (e.保單號碼 || "");
+  fld(k,"ins").value = e.被保險人 || "";
+  if (e.檔名) fileNames[k] = e.檔名;
+  const ec = e.變更內容 || {}, skip = e.略過 || [];
+  if (ec.住所 && !$("addr").value) $("addr").value = addrText(ec.住所);
+  fld(k,"a").checked = !skip.includes("住所") && !!(ec.住所 || ch.住所);
+  fld(k,"p").checked = !PHONE.some((p) => skip.includes(p));
+  fld(k,"e").checked = !skip.includes("E-mail");
+ }
+ showAddr();
+}
+
+/* ---------- 資源載入（字型 10MB，先在背景抓） ---------- */
+const cache = {};
+const getBytes = (url) => (cache[url] ||= fetch(url).then((r) => { if (!r.ok) throw new Error(url + " 載入失敗"); return r.arrayBuffer(); }));
+let layoutP = fetch("layout.json").then((r) => r.json());
+getBytes("font.ttf").catch(() => {});
+
+/* ---------- 下載 ---------- */
+let dl = null;
+(async () => { try { dl = await window.claude?.use?.("downloads"); } catch (e) { dl = null; } dlNoteUpdate(); })();
+const inClaude = !!window.claude;  // 在 claude.ai 用平台下載；GitHub Pages 等一般網頁用瀏覽器下載
+function dlNoteUpdate() {
+ $("dlNote").textContent = (inClaude && !dl) ? "這個檢視畫面無法下載檔案。請在 claude.ai 開啟這個頁面再下載。" : "";
+ $("dlOne").disabled = $("dlAll").disabled = (inClaude && !dl) || !results.length;
+}
+function browserSave(filename, data) {
+ const blob = data instanceof Blob ? data : new Blob([data], {type: filename.endsWith(".json") ? "application/json" : filename.endsWith(".zip") ? "application/zip" : "application/pdf"});
+ const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = filename;
+ document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+ $("status").textContent = "已下載：" + filename;
+}
+async function save(filename, data) {
+ if (!inClaude) { browserSave(filename, data); return; }
+ if (!dl) { dlNoteUpdate(); return; }
+ try { await dl.save({filename, data}); $("status").textContent = "已下載：" + filename; }
+ catch (e) {
+  const m = {declined:"已取消下載。", rate_limited:"上一個下載還沒結束，請稍等再按一次。", host_unavailable:"這個 App 無法存檔，請改用電腦瀏覽器開啟。"};
+  $("status").textContent = m[e?.code] || ("下載失敗：" + (e?.message || e?.code || e));
+ }
+}
+
+/* ---------- 產生 ---------- */
+let results = [], cur = 0, curPage = 1, pdfDoc = null;
+pdfjsLib.GlobalWorkerOptions.workerSrc = "lib/pdf.worker.min.js";
+
+$("f").addEventListener("submit", async (ev) => {
+ ev.preventDefault();
+ const cs = toCase();
+ if (!cs.保單.length) { $("status").textContent = "請至少勾選一家保險公司。"; return; }
+ 
+ $("go").disabled = true; $("status").textContent = "產生中…（第一次要載入字型，約數秒）";
+ try {
+  const [L, fontBytes] = await Promise.all([layoutP, getBytes("font.ttf")]);
+  const out = [];
+  for (const e of cs.保單) {
+   const CL = L.公司[FC.ALIASES[e.公司]];
+   const formBytes = await getBytes(CL.表單);
+   const r = await FC.fillOne(cs, e, L, {PDFLib, fontkit, formBytes: formBytes.slice(0), fontBytes: fontBytes.slice(0)});
+   if (!e.保單號碼 && !["富邦","遠雄"].includes(e.公司)) r.warn.unshift("沒有填保單號碼");
+   out.push(r);
+  }
+  results = out; cur = 0;
+  renderTabs(); await show(0);
+  if (window.innerWidth <= 980) document.querySelector(".viewer").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+  const nw = out.reduce((a, r) => a + r.warn.length, 0);
+  $("status").innerHTML = `完成 ${out.length} 份。` + (nw ? `<span class="bad">有 ${nw} 個提醒，請看預覽下方。</span>` : '<span class="oknote">沒有警告。</span>') + " 列印前請再看一眼。";
+ } catch (err) {
+  console.error(err); $("status").textContent = "產生失敗：" + (err.message || err);
+ } finally { $("go").disabled = false; dlNoteUpdate(); }
+});
+
+function renderTabs() {
+ $("tabs").innerHTML = results.map((r, i) => `<button type="button" class="tab" role="tab" data-i="${i}" aria-selected="${i===cur}">${esc(r.全名)}${r.warn.length ? " ⚠" : ""}</button>`).join("");
+ $("pager").hidden = !results.length;
+}
+$("tabs").addEventListener("click", (e) => { const b = e.target.closest(".tab"); if (b) show(+b.dataset.i); });
+
+async function show(i) {
+ cur = i; curPage = 1;
+ document.querySelectorAll(".tab").forEach((t) => t.setAttribute("aria-selected", String(+t.dataset.i === i)));
+ const r = results[i];
+ $("warns").innerHTML = r.warn.length ? "<b>提醒</b><br>" + r.warn.map(esc).join("<br>") : "";
+ pdfDoc = await pdfjsLib.getDocument({data: r.bytes.slice(0)}).promise;
+ await drawPage();
+}
+async function drawPage() {
+ const page = await pdfDoc.getPage(curPage);
+ const sheet = $("sheet"), w = Math.max(320, sheet.clientWidth);
+ const vp0 = page.getViewport({scale: 1}), dpr = Math.min(window.devicePixelRatio || 1, 2);
+ const vp = page.getViewport({scale: (w / vp0.width) * dpr});
+ const c = document.createElement("canvas"); c.width = vp.width; c.height = vp.height;
+ await page.render({canvasContext: c.getContext("2d"), viewport: vp}).promise;
+ sheet.replaceChildren(c);
+ $("pageNo").textContent = `第 ${curPage} / ${pdfDoc.numPages} 頁`;
+ $("prev").disabled = curPage <= 1; $("next").disabled = curPage >= pdfDoc.numPages;
+}
+$("prev").addEventListener("click", () => { if (curPage > 1) { curPage--; drawPage(); } });
+$("next").addEventListener("click", () => { if (pdfDoc && curPage < pdfDoc.numPages) { curPage++; drawPage(); } });
+let rsz; const ro = new ResizeObserver(() => { clearTimeout(rsz); rsz = setTimeout(() => pdfDoc && drawPage(), 200); });
+ro.observe($("sheet"));
+
+$("dlOne").addEventListener("click", () => results[cur] && save(results[cur].filename, results[cur].bytes.slice(0)));
+$("dlAll").addEventListener("click", async () => {
+ if (!results.length) return;
+ const z = new JSZip();
+ results.forEach((r) => z.file(r.filename, r.bytes));
+ z.file("填寫資料.json", JSON.stringify(toCase(), null, 1));
+ const blob = await z.generateAsync({type: "blob"});
+ const who = $("name").value.trim() || "申請書";
+ save(`${who}-${FC.rocToday()}${$("topic").value.trim() || "聯絡資訊變更"}.zip`, blob);
+});
+
+/* ---------- 檔案 ---------- */
+$("saveJson").addEventListener("click", () => save("填寫資料.json", JSON.stringify(toCase(), null, 1)));
+$("openJson").addEventListener("click", () => $("fileIn").click());
+$("fileIn").addEventListener("change", async () => {
+ const f = $("fileIn").files[0]; if (!f) return;
+ try { fromCase(JSON.parse(await f.text())); $("status").textContent = "已開啟：" + f.name; }
+ catch (e) { $("status").textContent = "這個檔案讀不懂：" + e.message; }
+ $("fileIn").value = "";
+});
+$("clear").addEventListener("click", () => { clearForm(); results = []; renderTabs(); pdfDoc = null; $("warns").innerHTML = "";
+ $("sheet").innerHTML = '<div class="empty">已清除。</div>'; $("status").textContent = ""; dlNoteUpdate(); });
+$("sample").addEventListener("click", () => fromCase({
+ 要保人:{姓名:"王小明",身分證字號:"A123456789"},
+ 變更內容:{住所:"320桃園市中壢區新興路102巷12號3樓",行動電話:"0912345678","E-mail":"wang.demo@gmail.com"},
+ 事項:"聯絡資訊變更",
+ 保單:[{公司:"台灣",保單號碼:"0000012345"},{公司:"凱基",保單號碼:"A1234567890",被保險人:"王小明"},{公司:"安達",保單號碼:"000031200000318",被保險人:"王小明"}]}));
+
+loadSp(); renderTabs(); dlNoteUpdate();
+}
+</script>
+</body>
+</html>
