@@ -77,7 +77,7 @@ input[type=file]{display:none}
 <header>
  <div>
   <h1>個人資料修改申請書</h1>
-  <p class="sub">地址、電話、E-mail 只輸入一次，自動對好台灣、凱基、富邦、安達、全球、遠雄、臺銀七家申請書。資料只在你的瀏覽器處理，不會上傳。</p>
+  <p class="sub">地址、電話、E-mail 只輸入一次，自動對好台灣、凱基、富邦、安達、全球、遠雄、友邦、臺銀八家申請書。資料只在你的瀏覽器處理，不會上傳。</p>
  </div>
  <div class="top-actions">
   <button id="openJson" type="button">開啟填寫資料.json</button>
@@ -128,7 +128,7 @@ input[type=file]{display:none}
    <label class="chk"><input type="checkbox" id="o4" checked>被保險人同一人一併變更（富邦）</label>
   </div>
   <div class="grid" style="margin-top:8px">
-   <label class="f">被保險人聯絡資料（台灣、遠雄、臺銀）<select id="o5"><option value="">不填</option><option>同要保人</option></select></label>
+   <label class="f">被保險人聯絡資料（台灣、遠雄、友邦、臺銀）<select id="o5"><option value="">不填</option><option>同要保人</option></select></label>
    <label class="f">電子通知（富邦、凱基、安達、全球、遠雄）<select id="o6"><option value="">不填</option><option>申請</option><option>取消</option></select></label>
   </div>
  </section>
@@ -178,7 +178,7 @@ const FC = window.FillCore;
 const CO = [
  {k:"台灣",n:"台灣人壽",p:"1 頁"},{k:"凱基",n:"凱基人壽",p:"2 頁"},
  {k:"富邦",n:"富邦人壽",p:"2 頁"},{k:"安達",n:"安達人壽",p:"2 頁"},
- {k:"全球",n:"全球人壽",p:"1 頁"},{k:"遠雄",n:"遠雄人壽",p:"2 頁"},
+ {k:"全球",n:"全球人壽",p:"1 頁"},{k:"遠雄",n:"遠雄人壽",p:"2 頁"},{k:"友邦",n:"友邦人壽",p:"2 頁"},
  {k:"臺銀",n:"臺銀人壽",p:"3 頁",x:1}];
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const PHONE = ["住家電話","公司電話","公司分機","行動電話"];
